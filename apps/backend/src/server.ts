@@ -11,6 +11,11 @@ const LANDING_PAGE = getEnvVariable("LANDING_PAGE");
 const APP_URL = getEnvVariable("APP_URL");
 
 export const app = new Elysia()
+    // .use(rateLimiter)
+    // .onRequest(({ rateLimiter, ip, set, status }) => {
+    //     if (rateLimiter.check(ip)) return status(420, 'Enhance your calm')
+    // })
+    
     // Built-in Swagger (Replaces manual API docs)
     .use(swagger())
 

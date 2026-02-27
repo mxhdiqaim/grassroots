@@ -16,6 +16,6 @@ const PORT = parseInt(getEnvVariable("PORT"));
 
     // Start Elysia
     app.listen(PORT, () => {
-        console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`);
+        console.log(`Server is running at ${app.server?.hostname}:${app.server?.port}`);
     });
 })()
