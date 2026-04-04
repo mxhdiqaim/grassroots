@@ -1,5 +1,5 @@
 {
-  "name": "grassroot-sports-api",
+  "name": "backend",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -24,8 +24,9 @@
     "@elysiajs/eden": "^1.4.8",
     "@elysiajs/static": "^1.4.7",
     "@elysiajs/swagger": "^1.3.1",
+    "backend": "workspace:*",
     "drizzle-orm": "^0.45.1",
     "elysia": "^1.4.26",
-    "pg": "^8.19.0"
+    "uuidv7": "^1.2.1"
   }
 }

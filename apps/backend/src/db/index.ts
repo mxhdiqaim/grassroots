@@ -1,24 +1,13 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool, type PoolConfig } from "pg";
-import schema from "./schema.ts";
-import { getEnvVariable } from "../utils";
+import { drizzle } from 'drizzle-orm/bun-sqlite';
+import { Database } from 'bun:sqlite';
+import * as schema from './schema';
 
-// const NODE_ENV = getEnvVariable("NODE_ENV");
-const sslRequired = getEnvVariable("DB_SSL_REQUIRED") === "true";
+// Creates the file if it doesn't exist
+const sqlite = new Database('sqlite.db');
 
-const connectionString = getEnvVariable("DB_CONNECTION_STRING")
-
-const poolConfig: PoolConfig = {
-    connectionString,
-    ssl: sslRequired ? { rejectUnauthorized: false } : false,
-};
-
-export const pool = new Pool(poolConfig);
-const db = drizzle(pool, { schema });
+export const db = drizzle(sqlite, { schema });
 
 export const connect = async () => {
-    const client = await pool.connect();
-    client.release(); // Test connection and release back to the pool
+    // With SQLite, "connecting" is just opening the file.
+    console.log("📂 SQLite database loaded.");
 };
-
-export default db;

@@ -15,7 +15,7 @@ export const app = new Elysia()
     // .onRequest(({ rateLimiter, ip, set, status }) => {
     //     if (rateLimiter.check(ip)) return status(420, 'Enhance your calm')
     // })
-    
+
     // Built-in Swagger (Replaces manual API docs)
     .use(swagger())
 

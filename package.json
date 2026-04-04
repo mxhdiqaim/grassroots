@@ -1,5 +1,5 @@
 {
-  "name": "grassroot-footy",
+  "name": "grassroot",
   "private": true,
   "workspaces": [
     "apps/*"
