@@ -23,6 +23,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@bogeychan/elysia-logger": "^0.1.10",
     "@elysiajs/cors": "^1.4.1",
     "@elysiajs/eden": "^1.4.8",
     "@elysiajs/static": "^1.4.7",

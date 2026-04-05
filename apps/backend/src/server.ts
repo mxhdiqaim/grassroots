@@ -2,22 +2,16 @@ import { Elysia } from 'elysia';
 import { cors } from '@elysiajs/cors';
 import { swagger } from '@elysiajs/swagger';
 import { getEnvVariable } from "./utils";
-import {matchRoutes} from "./routes/match.ts";
+import {logger} from "@bogeychan/elysia-logger";
+import {routes} from "./routes";
 
 const NODE_ENV = getEnvVariable("NODE_ENV");
 const LANDING_PAGE = getEnvVariable("LANDING_PAGE");
 const APP_URL = getEnvVariable("APP_URL");
 
 export const app = new Elysia()
-    // .use(rateLimiter)
-    // .onRequest(({ rateLimiter, ip, set, status }) => {
-    //     if (rateLimiter.check(ip)) return status(420, 'Enhance your calm')
-    // })
-
-    // Built-in Swagger (Replaces manual API docs)
+    .use(logger())
     .use(swagger())
-
-    // Performance-optimised CORS
     .use(cors({
         origin: NODE_ENV === "development" ? true : [LANDING_PAGE, APP_URL],
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
@@ -32,10 +26,7 @@ export const app = new Elysia()
     })
 
     // Your API Routes
-    .group('/api/v1', (app) =>
-        app.use(matchRoutes)
-        // .use(userRoutes) // You can add more plugins here
-    )
+    .group('/api/v1', (app) => app.use(routes))
 
     // Global Error Handling
     .onError(({ code, error, set }) => {
