@@ -1,12 +1,13 @@
 import { defineConfig } from 'drizzle-kit';
+import {getEnvVariable} from "./src/utils";
+
+const DATABASE_URL = getEnvVariable("DATABASE_URL");
 
 export default defineConfig({
     out: './migration',
     schema: './src/schema',
-    dialect: 'sqlite',
+    dialect: 'postgresql',
     dbCredentials: {
-        url: 'sqlite.db',
+        url: DATABASE_URL,
     },
-    verbose: true,
-    strict: true,
 });

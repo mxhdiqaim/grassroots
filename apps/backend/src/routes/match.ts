@@ -1,5 +1,5 @@
 import { Elysia, t } from 'elysia';
-import {getMatches, goLive} from "../controller";
+import {createMatch, getMatches, goLive} from "../controller";
 
 export const matchRoutes = new Elysia({ prefix: '/matches' })
     // optional global error logger
@@ -8,6 +8,14 @@ export const matchRoutes = new Elysia({ prefix: '/matches' })
     })
 
     .get('/', getMatches)
+
+    .post('/', createMatch, {
+        body: t.Object({
+            title: t.String(),
+            description: t.Optional(t.String()),
+            scheduledAt: t.Optional(t.String())
+        })
+    })
 
     .post('/:id/go-live', goLive, {
         params: t.Object({

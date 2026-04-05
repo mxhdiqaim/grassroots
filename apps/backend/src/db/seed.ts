@@ -1,5 +1,5 @@
 import {db} from "./index.ts";
-import {matches, type NewMatch} from "../schema/match-schema.ts";
+import {matches, type NewMatch} from "../schema";
 
 
 async function seed() {

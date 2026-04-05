@@ -1,7 +1,7 @@
 import {db} from "../db";
-import {matches} from "../schema";
+import {matches, type NewMatch} from "../schema";
 import {desc, eq} from "drizzle-orm";
-import {createLiveInput} from "../services/cloudflare.ts";
+import {createLiveInput} from "../config/cloudflare.ts";
 import {handleError} from "../utils/handle-error.ts";
 
 export const getMatches =  async () => {
@@ -52,3 +52,24 @@ export const goLive = async ({ params }:{ params: any }) => {
         return handleError("Failed to go live", 500, error as Error);
     }
 }
+
+export const createMatch = async ({ body }: { body: NewMatch }) => {
+    try {
+        const { title, description, scheduledAt } = body;
+
+        const [newMatch] = await db.insert(matches).values({
+            title,
+            description: description ?? "",
+            scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
+            status: 'scheduled',
+            createdAt: new Date(),
+        }).returning();
+
+        return {
+            message: "Match created successfully",
+            data: newMatch
+        };
+    } catch (error) {
+        return handleError("Failed to create match", 500, error as Error);
+    }
+};

@@ -1,13 +1,20 @@
-import { drizzle } from 'drizzle-orm/bun-sqlite';
-import { Database } from 'bun:sqlite';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 import * as schema from './schema';
+import {getEnvVariable} from "../utils";
 
-// Creates the file if it doesn't exist
-const sqlite = new Database('sqlite.db');
+const connectionString = getEnvVariable("DATABASE_URL");
 
-export const db = drizzle(sqlite, { schema });
+const client = postgres(connectionString, { prepare: false });
+
+export const db = drizzle(client, { schema });
 
 export const connect = async () => {
-    // With SQLite, "connecting" is just opening the file.
-    console.log("📂 SQLite database loaded.");
+    try {
+        await client`SELECT 1`;
+        console.log("🐘 Postgres database connected.");
+    } catch (error) {
+        console.error("❌ Postgres connection failed:", error);
+        throw error;
+    }
 };

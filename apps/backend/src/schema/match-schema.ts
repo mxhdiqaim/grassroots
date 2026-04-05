@@ -1,17 +1,21 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
-import { uuidv7 } from 'uuidv7';
+import {pgTable, text, timestamp, pgEnum, uuid} from 'drizzle-orm/pg-core';
+import {sql} from "drizzle-orm";
 
-export const MATCH_STATUS = ["scheduled", "live", "ended"] as const;
-export type MatchStatus = typeof MATCH_STATUS[number];
+export const statusEnum = pgEnum('match_status', [
+    "scheduled",
+    "live",
+    "ended"
+]);
 
-export const matches = sqliteTable('matches', {
-    id: text('id')
-        .primaryKey()
-        .$defaultFn(() => uuidv7()),
+export const matches = pgTable('matches', {
+    id: uuid().default(sql`public.uuid_generate_v7()`).primaryKey().notNull(),
 
     title: text('title').notNull(),
+    description: text('description'),
 
-    status: text('status', { enum: MATCH_STATUS })
+    scheduledAt: timestamp('scheduled_at', { withTimezone: true }),
+
+    status: statusEnum('status')
         .notNull()
         .default("scheduled"),
 
@@ -20,13 +24,12 @@ export const matches = sqliteTable('matches', {
     cloudflareInputId: text('cloudflare_input_id'),
     playbackUrl: text('playback_url'),
 
-    createdAt: integer('created_at', { mode: 'timestamp' })
+    createdAt: timestamp('created_at', { withTimezone: true })
         .notNull()
-        .default(new Date()),
-
-    lastModified: integer('last_modified', { mode: 'timestamp' })
+        .defaultNow(),
+    lastModified: timestamp('last_modified', { withTimezone: true })
         .notNull()
-        .default(new Date())
+        .defaultNow()
         .$onUpdateFn(() => new Date()),
 });
 

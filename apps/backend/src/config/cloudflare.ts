@@ -2,8 +2,21 @@ import { getEnvVariable } from "../utils";
 
 const ACCOUNT_ID = getEnvVariable("CLOUDFLARE_ACCOUNT_ID");
 const API_TOKEN = getEnvVariable("CLOUDFLARE_API_TOKEN");
+const NODE_ENV = getEnvVariable("NODE_ENV");
 
 export const createLiveInput = async (matchTitle: string) => {
+    // If we are in dev and don't have keys, return MOCK data
+    if (NODE_ENV === "development" && (!ACCOUNT_ID || !API_TOKEN)) {
+        console.log(`🛠️ [MOCK] Creating Live Input for: ${matchTitle}`);
+
+        return {
+            uid: `mock-uid-${Math.random().toString(36).substr(2, 9)}`,
+            rtmpsUrl: "rtmps://live.cloudflare.com:443/live/",
+            streamKey: "MOCK_KEY_12345_TESTING",
+            playbackUrl: "https://customer-example.cloudflarestream.com/mock/manifest/video.m3u8"
+        };
+    }
+
     const url = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/stream/live_inputs`;
 
     const response = await fetch(url, {
@@ -16,7 +29,7 @@ export const createLiveInput = async (matchTitle: string) => {
             meta: { name: matchTitle },
             recording: {
                 mode: 'automatic',
-                requireSignedURLs: false // Set to true later for premium access
+                requireSignedURLs: false
             }
         })
     });
@@ -27,20 +40,12 @@ export const createLiveInput = async (matchTitle: string) => {
     }
 
     // Explicitly define the type you expect from the response
-    const { result } = (await response.json()) as {
-        result: {
-            uid: string;
-            rtmps: { url: string; streamKey: string };
-            playback: { hls: string };
-        }
-    };
+    const { result } = (await response.json()) as any;
 
     return {
         uid: result.uid,
-        // The RTMPS URL for the streamer's phone
         rtmpsUrl: result.rtmps.url,
         streamKey: result.rtmps.streamKey,
-        // The HLS (.m3u8) URL for the fans' phones
-        playbackUrl: result.playback.hls
+        playbackUrl: result.playback.hls,
     };
 };
