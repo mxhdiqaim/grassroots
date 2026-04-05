@@ -1,6 +1,5 @@
 import { Elysia } from 'elysia';
 import { cors } from '@elysiajs/cors';
-import { staticPlugin } from '@elysiajs/static';
 import { swagger } from '@elysiajs/swagger';
 import { getEnvVariable } from "./utils";
 import {matchRoutes} from "./routes/match.ts";
@@ -20,17 +19,9 @@ export const app = new Elysia()
 
     // Performance-optimised CORS
     .use(cors({
-        origin: NODE_ENV === "development"
-            ? [/localhost:300[0-2]/, /localhost:550[0-2]/] // Allow local dev ports
-            : [LANDING_PAGE, APP_URL],
-        methods: ["GET", "POST", "PATCH", "DELETE"],
+        origin: NODE_ENV === "development" ? true : [LANDING_PAGE, APP_URL],
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
         credentials: true
-    }))
-
-    // Static Files (Replaces express.static)
-    .use(staticPlugin({
-        assets: 'public',
-        prefix: '/public'
     }))
 
     // Global State & Context (Replaces custom req/res mutation)
