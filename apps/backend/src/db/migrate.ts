@@ -5,7 +5,7 @@ async function runMigration() {
     console.log("⏳ Running migrations...");
 
     try {
-        migrate(db, {migrationsFolder: "./drizzle"});
+        migrate(db, {migrationsFolder: "./migration"});
         console.log("✅ Migrations completed successfully!");
     } catch (error) {
         console.error("❌ Migration failed:", error);

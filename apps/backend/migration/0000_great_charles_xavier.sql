@@ -6,6 +6,6 @@ CREATE TABLE `matches` (
 	`rtmps_url` text,
 	`cloudflare_input_id` text,
 	`playback_url` text,
-	`created_at` integer DEFAULT '"2026-04-05T02:50:11.364Z"' NOT NULL,
-	`last_modified` integer DEFAULT '"2026-04-05T02:50:11.364Z"' NOT NULL
+	`created_at` integer DEFAULT '"2026-04-05T10:37:10.904Z"' NOT NULL,
+	`last_modified` integer DEFAULT '"2026-04-05T10:37:10.904Z"' NOT NULL
 );

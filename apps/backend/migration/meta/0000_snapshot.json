@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "12f4d72d-df96-41f7-8b8b-1830462d0b03",
+  "id": "33600cf5-5d21-4f45-9b2e-0d8d6887050c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "matches": {
@@ -63,7 +63,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'\"2026-04-05T02:50:11.364Z\"'"
+          "default": "'\"2026-04-05T10:37:10.904Z\"'"
         },
         "last_modified": {
           "name": "last_modified",
@@ -71,7 +71,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'\"2026-04-05T02:50:11.364Z\"'"
+          "default": "'\"2026-04-05T10:37:10.904Z\"'"
         }
       },
       "indexes": {},
