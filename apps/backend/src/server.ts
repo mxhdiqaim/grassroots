@@ -4,7 +4,6 @@ import { staticPlugin } from '@elysiajs/static';
 import { swagger } from '@elysiajs/swagger';
 import { getEnvVariable } from "./utils";
 import {matchRoutes} from "./routes/match.ts";
-// import { routes } from "./routes"; // We'll convert your routes to Elysia modules
 
 const NODE_ENV = getEnvVariable("NODE_ENV");
 const LANDING_PAGE = getEnvVariable("LANDING_PAGE");

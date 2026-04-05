@@ -1,32 +1,47 @@
-import { Elysia, t } from 'elysia';
-import error from "elysia"
+import { Elysia, t, status } from 'elysia';
 import { eq, desc } from 'drizzle-orm';
 import { createLiveInput } from '../services/cloudflare';
-import {matches} from "../schema/match-schema.ts";
 import { db } from "../db";
+import {matches} from "../schema/match-schema.ts";
 
 export const matchRoutes = new Elysia({ prefix: '/matches' })
+    // optional global error logger
+    .onError(({ code }) => {
+        if (code === 500) return 'Server Error'
+    })
+
     .get('/', async () => {
         return db.select().from(matches).orderBy(desc(matches.createdAt));
     })
 
     .post('/:id/go-live', async ({ params }) => {
         try {
-            const matchId = Number(params.id);
+            const matchId = params.id;
 
-            // Optional: You should probably verify the match exists here first
-            const streamData = await createLiveInput(`Match-ID-${matchId}`);
+            // Verify match exists first
+            const [existingMatch] = await db.select()
+                .from(matches)
+                .where(eq(matches.id, matchId))
+                .limit(1);
 
-            // Update DB
+            if (!existingMatch) {
+                return status(404, { message: "Match not found in local database" });
+            }
+
+            // 2. Initialize Cloudflare Stream
+            const streamData = await createLiveInput(existingMatch.title || `Match-${matchId}`);
+
+            // 3. Update DB using explicit mapping (safer than spread)
             await db.update(matches)
                 .set({
+                    status: 'live',
                     cloudflareInputId: streamData.uid,
                     streamKey: streamData.streamKey,
                     rtmpsUrl: streamData.rtmpsUrl,
                     playbackUrl: streamData.playbackUrl,
-                    status: 'live'
+                    lastModified: new Date()
                 })
-                .where(eq(matches.id, matchId)); // 3. Fixed the 'eq' logic
+                .where(eq(matches.id, matchId));
 
             return {
                 message: "Stream initialized",
@@ -35,12 +50,12 @@ export const matchRoutes = new Elysia({ prefix: '/matches' })
                 viewer_url: streamData.playbackUrl
             };
 
-        } catch (e) {
-            console.error(e);
-            return new error(500, "Failed to create stream"); // 4. This works now
+        } catch (error) {
+            console.error("Streaming Error:", error);
+            return status(500, { message: "Failed to communicate with Cloudflare" });
         }
     }, {
         params: t.Object({
-            id: t.String()
+            id: t.String() // Matches your UUIDv7 string format
         })
     });
