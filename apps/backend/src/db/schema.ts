@@ -1,4 +1,4 @@
-import {matches} from "../schema/match-schema.ts";
+import {matches} from "../schema";
 
 const relations = {};
 
